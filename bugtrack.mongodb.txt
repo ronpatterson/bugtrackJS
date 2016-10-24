@@ -69,7 +69,7 @@ db.bt_users {
 	"bt_group" : string
 }
 
-// initial admin user account
+-- initial admin user account
 db.bt_users.insert({
     uid: 'admin',
     lname: 'Admin',
