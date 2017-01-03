@@ -195,6 +195,7 @@ var bt = // setup the bt namespace
 
 	bugadd: function ( event )
 	{
+		bt.reload_lookups();
 		bt.showDialogDiv('BugTrack Bug Add','bt_bugs_show_edit');
 		$('#bugedit_errors').html('');
 		$('#bugedit_form1 input[type="text"]').val('');
@@ -270,6 +271,7 @@ var bt = // setup the bt namespace
 	{
 		//alert(id);
 		//var id2 = parseInt(id.replace(/[^\d]/g,''));
+		bt.reload_lookups();
 		var params = "action=show&id="+id;
 		$.ajax({
 			url: 'bug_get',
@@ -1053,6 +1055,21 @@ var bt = // setup the bt namespace
 		{
 			//console.log(data);
 			bt.group_data = data;
+			var sel = bt.build_selection('bt_group',data.bt_group);
+			$('#bt_groups').empty().append(sel);
+			var sel = bt.build_selection('bt_group',data.bt_group);
+			$('#bt_grp').empty().append(sel);
+			var sel = bt.build_selection('bug_type',data.bt_type);
+			$('#btypes_s').empty().append(sel);
+			var sel = bt.build_selection('status',data.bt_status);
+			$('#status_s').empty().append(sel);
+			var sel = bt.build_selection('priority',data.bt_priority);
+			$('#priority_s').empty().append(sel);
+			var sel = bt.build_selection('bug_type2',data.bt_type);
+			$('#btc_types').empty().append(sel);
+			var sel = bt.build_selection('status2',data.bt_status);
+			$('#btc_status').empty().append(sel);
+			if (!/admin/.test(bt.group_data.roles)) $('#bt_admin_btn').hide();
 		});
 	},
 
@@ -1070,7 +1087,7 @@ var bt = // setup the bt namespace
 		}
 		return 'n/a';
 	},
-
+	
 	init: function ( )
 	{
 		$('#bt_refresh_btn').button();
@@ -1093,32 +1110,7 @@ var bt = // setup the bt namespace
 		$('#bt_user_save_cancel').on('click',bt.user_save_cancel);
 		$('#bt_show_buttons span').button();
 		$('#bt_admin_btn').show();
-		var params = 'action=bt_init';
-		$.ajax({
-			url: 'bt_init',
-			type: 'get',
-			data: params,
-			dataType: 'json'
-		}).done(function (data)
-		{
-			//console.log(data);
-			bt.group_data = data;
-			var sel = bt.build_selection('bt_group',data.bt_group);
-			$('#bt_groups').empty().append(sel);
-			var sel = bt.build_selection('bt_group',data.bt_group);
-			$('#bt_grp').empty().append(sel);
-			var sel = bt.build_selection('bug_type',data.bt_type);
-			$('#btypes_s').empty().append(sel);
-			var sel = bt.build_selection('status',data.bt_status);
-			$('#status_s').empty().append(sel);
-			var sel = bt.build_selection('priority',data.bt_priority);
-			$('#priority_s').empty().append(sel);
-			var sel = bt.build_selection('bug_type2',data.bt_type);
-			$('#btc_types').empty().append(sel);
-			var sel = bt.build_selection('status2',data.bt_status);
-			$('#btc_status').empty().append(sel);
-			if (!/admin/.test(bt.group_data.roles)) $('#bt_admin_btn').hide();
-		});
+		bt.reload_lookups();
 	}
 
 } // end of bt namespace

@@ -32,21 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.urlencoded({ extended: true })); 
 console.log('Current directory: ',process.cwd());
 
-function app_init (db) {
-	// init the session
-	app.use(session({
-		//secret: process.env.SESSION_SECRET,
-		secret: 'wd_billing_sess_cd',
-		store: new MongoDBStore(
-		{
-			db: db,
-			collection: 'mySessions'
-		}),
-		cookie: { },
-		maxAge: 2 * 24 * 60 * 60 * 1000,
-		saveUninitialized: true,
-		resave: false
-	}));
+function app_lu_init (db) {
 	// load lookups with the bt_lookups and bt_users collections
 	var cursor = db.collection('bt_lookups').find( { } );
 	var results = {};
@@ -75,6 +61,24 @@ function app_init (db) {
 			bt.put_lookups(results);
 		});
 	});
+}
+
+function app_init (db) {
+	// init the session
+	app.use(session({
+		//secret: process.env.SESSION_SECRET,
+		secret: 'wd_billing_sess_cd',
+		store: new MongoDBStore(
+		{
+			db: db,
+			collection: 'mySessions'
+		}),
+		cookie: { },
+		maxAge: 2 * 24 * 60 * 60 * 1000,
+		saveUninitialized: true,
+		resave: false
+	}));
+	app_lu_init(db);
 }
 
 MongoClient.connect('mongodb://'+mongo_host+':'+mongo_port+'/bugtrack', (err, db) => {
@@ -166,6 +170,7 @@ MongoClient.connect('mongodb://'+mongo_host+':'+mongo_port+'/bugtrack', (err, db
 
 	app.post('/lu_add_update', function(req, res, next) {
 		bt.lu_add_update(db, req, res, next);
+		app_lu_init(db);
 	});
 
 	app.get('/admin_users', function(req, res) {
