@@ -667,7 +667,7 @@ var bt = // setup the bt namespace
 		    case 'bt_group':
 		    case 'bt_status':
 		    case 'bt_priority':
-        		bt.bugadmin_lu_list(type);
+        		bt.bugadmin_lu_list(event, type);
         	    break;
 		    case 'bt_users':
         		bt.bugadmin_users();
@@ -677,7 +677,7 @@ var bt = // setup the bt namespace
 		}
 	},
 
-	bugadmin_lu_list: function ( type )
+	bugadmin_lu_list: function ( event, type )
 	{
 		$('#bt_lu_tbl tbody').off( 'click', 'button');
 		$.ajax({
@@ -796,7 +796,7 @@ var bt = // setup the bt namespace
 		{
 			$('#bt_lu_errors').html(response);
 			bt.reload_lookups();
-			bt.bugadmin_lu_list(f.lu_type.value);
+			bt.bugadmin_lu_list(event, f.lu_type.value);
 		});
 		return false;
 	},

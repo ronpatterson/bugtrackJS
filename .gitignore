@@ -1,0 +1,9 @@
+*~
+*pdf
+*project
+*bbprojectd
+*project
+.*
+!.gitignore
+node_modules
+bugtrack
