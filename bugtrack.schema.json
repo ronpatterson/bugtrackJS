@@ -1,0 +1,120 @@
+/*
+-- bugtrack.schema.json
+
+-- MongoDB design version
+
+-- Revision 0.1, 17-Nov-2017
+
+-- Ron Patterson, WildDog Design
+
+-- collections document definitions
+*/
+
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "title": "bugtrack/counters",
+    "description": "collection of counters",
+    "type": "object",
+    "required": [ "_id", "seq" ],
+    "properties": {
+        "_id" : { "type": "string" },
+        "seq" : { "type": "integer" }
+    }
+}
+
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "title": "bugtrack/bt_lookups",
+    "description": "collection of lookup values",
+    "type": "object",
+    "required": [ "_id", "items" ],
+    "properties": {
+        "_id" : { "type": "string" },
+        "items" : {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "required": [ "cd", "descr", "active" ],
+                "properties": {
+                    "cd" : { "type": "string" },
+                    "descr" : { "type": "string" },
+                    "active" : { "type": "string", "enum": [ "y", "n" ] }
+                }
+            }
+        }
+    }
+}
+
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "title": "bugtrack/bt_bugs",
+    "description": "collection of bugs",
+    "type": "object",
+    "required": [ "client_cd", "client_name", "client", "contacts", "active" ],
+    "properties": {
+        "descr" : { "type": "string" },
+        "product" : { "type": "string" },
+        "user_nm" : { "type": "string" },
+        "bug_type" : { "type": "string", maxlength: 1 },
+        "status" : { "type": "string" },
+        "priority" : { "type": "string", maxlength: 1 },
+        "comments" : { "type": "string" },
+        "solution" : { "type": "string" },
+        "assigned_to" : { "type": "string" },
+        "entry_dtm" : { "type": "string", "format": "date-time" },
+        "update_dtm" : { "type": "string", "format": "date-time" },
+        "closed_dtm" : { "type": "string", "format": "date-time" },
+        },
+        "worklog" : {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "required": [ "user_nm", "wl_public", "entry_dtm" ],
+                "properties": {
+                    "user_nm" : { "type": "string" },
+                    "comments" : { "type": "string" },
+                    "wl_public" : { "type": "string", maxlength: 1 },
+                    "entry_dtm" : { "type": "string", "format": "date-time" }
+                }
+            }
+        },
+        "attachments" : {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+                "type": "object",
+                "required": [ "user_nm", "comments", "entry_dtm" ],
+                "properties": {
+                    "file_name" : { "type": "string" },
+                    "file_size" : { "type": "integer" },
+                    "file_hash" : { "type": "string" },
+                    "entry_dtm" : { "type": "string", "format": "date-time" }
+                }
+            }
+        }
+    }
+}
+
+{
+    "$schema": "http://json-schema.org/draft-06/schema#",
+    "title": "bugtrack/bt_users",
+    "description": "collection of users",
+    "type": "object",
+    "required": [ "uid", "lname", "active" ],
+    "properties": {
+        "uid" : { "type": "string" },
+        "lname" : { "type": "string" },
+        "fname" : { "type": "string" },
+        "email" : { "type": "string" },
+        "active" : { "type": "string", "enum": [ "y", "n" ] },
+        "roles" : {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string" }
+        },
+        "pw" : { "type": "string" },
+        "bt_group" : { "type": "string" }
+    }
+}
