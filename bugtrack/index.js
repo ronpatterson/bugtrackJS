@@ -2,6 +2,8 @@
 // Ron Patterson, BPWC
 // 5/9/2016
 
+// 200317 ronp - changed update to updateOne
+
 'use strict';
 
 // load required modules
@@ -38,11 +40,11 @@ module.exports = function() {
             console.error(err.stack);
             res.status(500).render('error_template', { error: err });
         },
-        
+
         put_lookups: (lu) => {
             lookups = lu;
         },
-        
+
         get_lookups: () => {
             return lookups;
         },
@@ -65,10 +67,10 @@ module.exports = function() {
             var sess = req.session;
             db.collection('bt_users')
             .findOne(
-                { 'uid': uid, 'pw': crypto.createHash('md5').update(req.body.pw).digest("hex") }, 
+                { 'uid': uid, 'pw': crypto.createHash('md5').updateOne(req.body.pw).digest("hex") },
                 (err, user) => {
                     assert.equal(null, err);
-                    if (user === null) 
+                    if (user === null)
                     {
                         sess.destroy();
                         res.send('FAIL');
@@ -162,7 +164,7 @@ module.exports = function() {
                 }
             );
         },
-    
+
         bug_add_update: (db, req, res, next) => {
             //console.log(req.body); res.end('TEST'); return;
             if (typeof(req.body['id']) == 'undefined' || req.body.id == '') { // add
@@ -176,7 +178,7 @@ module.exports = function() {
                     },
                     (err, updoc) => {
                         assert.equal(null, err);
-                        console.log(updoc);
+                        //console.log(updoc);
                         var id = updoc.value.seq;
                         var bug_id = req.body.bt_group + id;
                         var iid = new ObjectId();
@@ -480,12 +482,13 @@ Comments: " + row.comments + "\n";
             )
         },
 
+				// 200317 ronp - fixed a depricated findOne arg
         admin_lu_list: (db, req, res) => {
             var type = req.query.type;
             db.collection('bt_lookups')
             .findOne(
                 { '_id': type },
-                { 'fields': {'items': 1} },
+                {'items': 1},
                 (err, lu) => {
                     assert.equal(null, err);
                     var results = { 'data': lu.items };
@@ -496,12 +499,13 @@ Comments: " + row.comments + "\n";
             );
         },
 
+				// 200317 ronp - fixed a depricated findOne arg
         admin_lu_get: (db, req, res) => {
             var type = req.query.type;
             db.collection('bt_lookups')
             .findOne(
                 { '_id': type },
-                { 'fields': {'items': 1} },
+                {'items': 1},
                 (err, lu) => {
                     assert.equal(null, err);
                     res.json(lu.items);
@@ -534,7 +538,7 @@ Comments: " + row.comments + "\n";
                         }
                         lu.items.push(doc);
                         var rec = db.collection('bt_lookups')
-                        .update(
+                        .updateOne(
                             { '_id': type },
                             { '$set': { 'items': lu.items } },
                             (err, result) => {
@@ -555,7 +559,7 @@ Comments: " + row.comments + "\n";
                             lu.items[i] = doc;
                             //console.log(lu,id); //res.end('TEST'); return;
                             var rec = db.collection('bt_lookups')
-                            .update(
+                            .updateOne(
                                 { '_id': type },
                                 { '$set': { 'items': lu.items } },
                                 (err, result) => {
@@ -610,7 +614,7 @@ Comments: " + row.comments + "\n";
             var uid = req.query.uid;
             db.collection('bt_users')
             .findOne(
-                { 'uid': uid }, 
+                { 'uid': uid },
                 (err, user) => {
                     assert.equal(null, err);
                     //console.log(user);
@@ -623,7 +627,7 @@ Comments: " + row.comments + "\n";
 
         user_add_update: (db, req, res, next) => {
             // uid, lname, fname, email, active, roles, pw, bt_group
-            var pw5 = crypto.createHash('md5').update(req.body.pw).digest("hex");
+            var pw5 = crypto.createHash('md5').updateOne(req.body.pw).digest("hex");
             // check action
             //console.log(req.body); res.end('TEST'); return;
             if (req.body.id == '') { // add
@@ -651,7 +655,7 @@ Comments: " + row.comments + "\n";
             }
             else { // update
                 if (req.body.pw == req.body.pw2) pw5 = req.body.pw;
-                else pw5 = crypto.createHash('md5').update(req.body.pw).digest("hex");
+                else pw5 = crypto.createHash('md5').updateOne(req.body.pw).digest("hex");
                 var doc = {
   "lname": req.body.lname
 , "fname": req.body.fname
@@ -663,7 +667,7 @@ Comments: " + row.comments + "\n";
 };
                 var id = req.body.id;
                 var rec = db.collection('bt_users')
-                .update(
+                .updateOne(
                     { '_id': new ObjectId(id) },
                     { '$set': doc },
                     (err, result) => {

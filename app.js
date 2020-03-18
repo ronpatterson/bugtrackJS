@@ -2,6 +2,8 @@
 // Ron Patterson, BPWC
 // 1/18/2016
 
+// 200317 ronp - some changes for connect-mongo v3
+
 'use strict';
 
 // load required modules
@@ -18,10 +20,13 @@ const express = require('express'),
 const MongoDBStore = require('connect-mongo')(session);
 
 // globals
-const mongo_host = 
-	'localhost',
-//	'192.168.0.25',
-	mongo_port = '27017';
+const mongo_host =
+// 200317 ronp - added mongo and dbLink
+//	'localhost',
+	'192.168.0.25',
+	mongo_port = '27017',
+	mongo_db = 'bugtrack',
+	dbLink = 'mongodb://'+mongo_host+':'+mongo_port+'/'+mongo_db;
 
 // setup express.js
 app.engine('html', engines.nunjucks);
@@ -29,7 +34,7 @@ app.set('view engine', 'html');
 app.set('views', __dirname + '/views');
 //app.use(session(sess));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyParser.urlencoded({ extended: true })); 
+app.use(bodyParser.urlencoded({ extended: true }));
 console.log('Current directory: ',process.cwd());
 
 function app_lu_init (db) {
@@ -71,6 +76,7 @@ function app_init (db) {
 		store: new MongoDBStore(
 		{
 			db: db,
+			url: dbLink,
 			collection: 'mySessions'
 		}),
 		cookie: { },
@@ -81,10 +87,12 @@ function app_init (db) {
 	app_lu_init(db);
 }
 
-MongoClient.connect('mongodb://'+mongo_host+':'+mongo_port+'/bugtrack', (err, db) => {
+MongoClient.connect(dbLink, (err, client) => {
 
+	// 200317 ronp - mods for MongoClient v3 changes
 	assert.equal(null, err);
 	console.log("Successfully connected to MongoDB.");
+	var db = client.db(mongo_db);
 	app_init(db);
 	//debugger;
 	setInterval(function() {app_init(db)},60000); // refresh lookups
@@ -126,7 +134,7 @@ MongoClient.connect('mongodb://'+mongo_host+':'+mongo_port+'/bugtrack', (err, db
 	app.get('/bug_get', function(req, res) {
 		bt.bug_get(db, req, res);
 	});
-	
+
 	app.post('/bug_add_update', function(req, res, next) {
 		bt.bug_add_update(db, req, res, next);
 	});
