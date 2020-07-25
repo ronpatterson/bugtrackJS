@@ -4,18 +4,18 @@
     "description": "BugTrack (nodejs version)",
     "main": "index.js",
     "dependencies": {
-        "express": "~4.17",
-        "express-session": "~1.17",
-        "connect-mongo": "~3.2",
         "body-parser": "~1.19",
+        "connect-mongo": "~3.2",
         "consolidate": "~0.15",
-        "nunjucks": "~3.2",
-        "mongodb": "~3.5",
-        "fs": "~0.0",
-        "dateformat": "~3.0",
         "crypto-js": "~4.0",
-        "nodemailer": "~6.4",
-        "multer": "~1.4"
+        "dateformat": "~3.0",
+        "express": "~4.17",
+        "express-session": "^1.17.1",
+        "fs": "~0.0",
+        "mongodb": "^3.5.9",
+        "multer": "~1.4",
+        "nodemailer": "^6.4.10",
+        "nunjucks": "^3.2.2"
     },
     "author": "Ron Patterson",
     "license": "0BSD"

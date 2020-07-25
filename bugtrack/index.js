@@ -3,6 +3,7 @@
 // 5/9/2016
 
 // 200317 ronp - changed update to updateOne
+// 200401 ronp - fixed some updates that shouldn't have changed
 
 'use strict';
 
@@ -67,7 +68,7 @@ module.exports = function() {
             var sess = req.session;
             db.collection('bt_users')
             .findOne(
-                { 'uid': uid, 'pw': crypto.createHash('md5').updateOne(req.body.pw).digest("hex") },
+                { 'uid': uid, 'pw': crypto.createHash('md5').update(req.body.pw).digest("hex") },
                 (err, user) => {
                     assert.equal(null, err);
                     if (user === null)
@@ -299,7 +300,7 @@ module.exports = function() {
 };
                     bug.worklog[idx] = doc;
                     var rec = db.collection('bt_bugs')
-                    .update(
+                    .updateOne(
                         { '_id': new ObjectId(id) },
                         { '$set': { 'worklog': bug.worklog } },
                         (err, result) => {
@@ -323,7 +324,7 @@ module.exports = function() {
 };
             //console.log(bug,doc); res.end('SUCCESS'); return;
             var rec = db.collection('bt_bugs')
-            .update(
+            .updateOne(
                 { '_id': new ObjectId(id) },
                 { '$set': doc },
                 (err, result) => {
@@ -439,7 +440,7 @@ Comments: " + row.comments + "\n";
 , "entry_dtm": new Date()
 };
             var rec = db.collection('bt_bugs')
-            .update(
+            .updateOne(
                 { '_id': new ObjectId(id) },
                 { '$push': { 'attachments': doc } },
                 (err, result) => {
@@ -466,7 +467,7 @@ Comments: " + row.comments + "\n";
             var hash = req.body.hash;
             // remove from bt_bugs.attachments
             db.collection('bt_bugs')
-            .update(
+            .updateOne(
                 { '_id': new ObjectId(id) },
                 { '$pull': { 'attachments.file_hash': hash } },
                 (err, result) => {
@@ -627,7 +628,7 @@ Comments: " + row.comments + "\n";
 
         user_add_update: (db, req, res, next) => {
             // uid, lname, fname, email, active, roles, pw, bt_group
-            var pw5 = crypto.createHash('md5').updateOne(req.body.pw).digest("hex");
+            var pw5 = crypto.createHash('md5').update(req.body.pw).digest("hex");
             // check action
             //console.log(req.body); res.end('TEST'); return;
             if (req.body.id == '') { // add
@@ -655,7 +656,7 @@ Comments: " + row.comments + "\n";
             }
             else { // update
                 if (req.body.pw == req.body.pw2) pw5 = req.body.pw;
-                else pw5 = crypto.createHash('md5').updateOne(req.body.pw).digest("hex");
+                else pw5 = crypto.createHash('md5').update(req.body.pw).digest("hex");
                 var doc = {
   "lname": req.body.lname
 , "fname": req.body.fname
