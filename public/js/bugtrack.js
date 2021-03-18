@@ -259,7 +259,7 @@ var bt = // setup the bt namespace
 		});
 		return false;
 	},
-	
+
 	bugshowdialog: function ( event, id )
 	{
 		bt.showDialogDiv('BugTrack Bug','bt_bugs_show_edit');
@@ -409,6 +409,61 @@ var bt = // setup the bt namespace
 		});
 		return false;
 	},
+
+    print_bug: function ( event )
+    {
+        let newWin = window.open("about:blank", "printbug");
+
+        // newWin.document.write(
+        //   //"<script>window.opener.document.body.innerHTML = 'Test'<\/script>"
+        //   "<h2>Some Test</h2>"
+        // );
+        var params = "action=print&id="+$('#bid').val();
+        $.ajax({
+            url: 'bug_get',
+            type: 'get',
+            data: params,
+            dataType: 'json'
+        }).done(function (data)
+        {
+            //console.log(data);
+            var html = '<style>@media print { button { visibility: hidden; } } th { text-align: left }</style>\n\n';
+            html += '<button type="button" onclick="return window.print();">Print</button>';
+            html += "<table>\n";
+            html += "<tr><th>Bug ID: </th><td>" + data.bug_id + '</td></tr>\n';
+            //html += '<tr><th>Group: </th><td>' + bt.get_lookup(bt.group_data.bt_group,group_cd) + '</td></tr>\n';
+			html += '<tr><th>Description: </th><td>' + data.descr + '</td></tr>\n';
+            html += '<tr><th>Product: </th><td>' + data.product + '</td></tr>\n';
+            html += '<tr><th>Type: </th><td>' + bt.get_lookup(bt.group_data.bt_type,data.bug_type) + '</td></tr>\n';
+            html += '<tr><th>Status: </th><td>' + data.status_descr + '</td></tr>\n';
+            html += '<tr><th>Priority: </th><td>' + data.priority_descr + '</td></tr>\n';
+            html += '<tr><th>Assigned: </th><td>' + data.aname + '</td></tr>\n';
+            html += '<tr><th>Comments: </th><td>' + data.comments + '</td></tr>\n';
+            html += '<tr><th>Solution: </th><td>' + data.solution + '</td></tr>\n';
+            html += '<tr><th>Entry Date/Time: </th><td>' + data.edtm + '</td></tr>\n';
+            html += '<tr><th>Update Date/Time: </th><td>' + data.udtm + '</td></tr>\n';
+            html += '<tr><th>Completed Date/Time: </th><td>' + data.cdtm + '</td></tr>\n';
+            html += '<tr><th>Owner: </th><td>' + data.ename + '</td></tr>\n';
+			html += '</table>\n';
+			// console.log('worklog_show:',data);
+			html += '<b>Bug Worklog:</b><br>\n';
+			if (!data.worklog || data.worklog.length == 0)
+				html += 'No worklog records\n';
+			else
+			{
+				var wl = data.worklog;
+				//html += '<tr><td colspan="2">' + JSON.stringify(wl) + '</td></tr>\n'
+				for (var x=0; x<wl.length; ++x)
+				{
+				    var uname = bt.group_data.users[wl[x].user_nm] ? bt.group_data.users[wl[x].user_nm].name : 'n/a';
+					html += '<b>Date/Time:</b> ' + wl[x].edtm + '<br>\n<b>User:</b> ' + uname + '<br>\n';
+					html += '<b>Comments:</b> '+bt.nl2br(wl[x].comments)+'<br><hr>\n';
+				}
+            }
+			newWin.document.write( html );
+        });
+        return false;
+    },
 
 	assign_search: function ( event )
 	{
@@ -656,7 +711,7 @@ var bt = // setup the bt namespace
 		$('#bt_admin_head').show();
 		return false;
 	},
-	
+
 	bugadmin_lu: function ( event )
 	{
 		$('.bugadmin').hide();
@@ -1042,7 +1097,7 @@ var bt = // setup the bt namespace
 		//console.log(obj);
 		return obj;
 	},
-	
+
 	reload_lookups: function ( )
 	{
 		var params = 'action=bt_init';
@@ -1087,7 +1142,7 @@ var bt = // setup the bt namespace
 		}
 		return 'n/a';
 	},
-	
+
 	init: function ( )
 	{
 		$('#bt_refresh_btn').button();
