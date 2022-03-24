@@ -9,18 +9,18 @@
 
 // load required modules
 const ObjectId = require('mongodb').ObjectID,
-	fs = require('fs'),
-	dateFormat = require('dateformat'),
-	crypto = require('crypto'),
-	mailer = require("nodemailer"),
-	multer = require('multer'),
-	upload = multer(), // for parsing multipart/form-data
-	assert = require('assert');
+    fs = require('fs'),
+    dateFormat = require('dateformat'),
+    crypto = require('crypto'),
+    mailer = require("nodemailer"),
+    multer = require('multer'),
+    upload = multer(), // for parsing multipart/form-data
+    assert = require('assert');
 
 const adir = '/usr/local/data/',
-	smtp_host = 'smtp.postoffice.net',
-	smtp_user = 'ron.patterson%40usa.net',
-	smtp_pw = 'xxxx';
+    smtp_host = 'smtp.postoffice.net',
+    smtp_user = 'ron.patterson%40usa.net',
+    smtp_pw = 'xxxx';
 
 var lookups = [];
 
@@ -61,7 +61,7 @@ module.exports = function() {
             res.end();
         },
 
-	    login_session: (db, req, res, next) => {
+        login_session: (db, req, res, next) => {
             //console.log(req.body);
             var uid = req.body.uid;
             var pw = req.body.pw;
@@ -226,6 +226,10 @@ module.exports = function() {
 , "solution": req.body.solution
 , "update_dtm": new Date()
 };
+                // 220224 ronp - check for new closure, update closed entry_dtm
+                if (req.body.oldstatus != 'c' && req.body.status == 'c') {
+                doc.closed_dtm = new Date();
+                }
                 //console.log(doc); res.end('TEST'); return;
                 var id = req.body.id;
                 db.collection('bt_bugs')
@@ -483,7 +487,7 @@ Comments: " + row.comments + "\n";
             )
         },
 
-				// 200317 ronp - fixed a depricated findOne arg
+        // 200317 ronp - fixed a depricated findOne arg
         admin_lu_list: (db, req, res) => {
             var type = req.query.type;
             db.collection('bt_lookups')
@@ -500,7 +504,7 @@ Comments: " + row.comments + "\n";
             );
         },
 
-				// 200317 ronp - fixed a depricated findOne arg
+        // 200317 ronp - fixed a depricated findOne arg
         admin_lu_get: (db, req, res) => {
             var type = req.query.type;
             db.collection('bt_lookups')
