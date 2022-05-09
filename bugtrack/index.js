@@ -228,7 +228,7 @@ module.exports = function() {
 };
                 // 220224 ronp - check for new closure, update closed entry_dtm
                 if (req.body.oldstatus != 'c' && req.body.status == 'c') {
-                doc.closed_dtm = new Date();
+                    doc.closed_dtm = new Date();
                 }
                 //console.log(doc); res.end('TEST'); return;
                 var id = req.body.id;
